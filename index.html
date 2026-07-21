@@ -121,7 +121,7 @@
                     <option value="TMT">TMT (Nakit / Kart)</option>
                 </select>
 
-                <!-- Yenilenen UC Fiyat Tablosu -->
+                <!-- UC Paketleri -->
                 <div id="ucPackageGroup" class="space-y-1">
                     <label class="text-xs text-slate-400 block">UC Paketi Seçin</label>
                     <select id="ucPackage" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
@@ -202,6 +202,7 @@
             const fullPhone = "+993" + phone;
 
             if (isSignUpMode) {
+                // KAYIT OLMA MODU
                 const { data, error } = await _supabase
                     .from('users')
                     .insert([{ phone: fullPhone, password: pass, adCount: 0, balance: 0.00 }]);
@@ -210,14 +211,38 @@
                     alert('Kayıt sırasında hata oluştu veya bu numara zaten kayıtlı.');
                     return;
                 }
-            }
 
-            currentUser = { 
-                phone: fullPhone, 
-                adCount: 0, 
-                balance: 0.00, 
-                isAdmin: (phone === '61000000') 
-            };
+                currentUser = { 
+                    phone: fullPhone, 
+                    adCount: 0, 
+                    balance: 0.00, 
+                    isAdmin: (phone === '61000000') 
+                };
+
+                alert('Hasap başarıyla açıldı!');
+
+            } else {
+                // GİRİŞ YAPMA MODU (Giriş bilgilerini doğrulama)
+                const { data, error } = await _supabase
+                    .from('users')
+                    .select('*')
+                    .eq('phone', fullPhone)
+                    .eq('password', pass)
+                    .maybeSingle();
+
+                if (error || !data) {
+                    alert('Telefon nomeri ýa-da açar sözi ýalňyş!');
+                    return; // Yanlış giriş olursa buradan öteye geçmez
+                }
+
+                // Gerçek kullanıcı verilerini yükleme
+                currentUser = { 
+                    phone: data.phone, 
+                    adCount: data.adCount || 0, 
+                    balance: data.balance || 0.00, 
+                    isAdmin: (phone === '61000000') 
+                };
+            }
 
             localStorage.setItem('suffer_user', JSON.stringify(currentUser));
             showDashboard();
@@ -261,7 +286,7 @@
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
-            const timer = setInterval(() => {
+            const timer = setInterval(async () => {
                 txt.innerHTML = `<i class="fa-solid fa-clock text-base"></i> Garaşyň: ${timeLeft}s`;
                 timeLeft--;
 
@@ -278,6 +303,12 @@
                     document.getElementById('userAdCount').innerText = currentUser.adCount;
                     document.getElementById('userBalance').innerText = currentUser.balance.toFixed(2);
                     localStorage.setItem('suffer_user', JSON.stringify(currentUser));
+
+                    // Veritabanında bakiyeyi güncelleme
+                    await _supabase
+                        .from('users')
+                        .update({ adCount: currentUser.adCount, balance: currentUser.balance })
+                        .eq('phone', currentUser.phone);
 
                     alert('Tebrikler! 30 saniye süre doldu ve +0.25 TMT bakiyenize eklendi.');
                 }
