@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SufferTask - Gazanç Et we Görme!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-900 text-white min-h-screen font-sans">
+
+    <!-- Header -->
+    <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 p-4">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-black text-amber-500 tracking-wider">SUFFER<span class="text-white">TASK</span></h1>
+            <div id="langBtn" onclick="toggleLanguage()" class="text-xs bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full cursor-pointer hover:bg-slate-700 transition">
+                🌐 TK / TR
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-md mx-auto p-4 pb-24 space-y-6">
+
+        <!-- Balance Card -->
+        <div class="bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl p-6 text-slate-950 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 opacity-10 text-8xl font-black">TMT</div>
+            <p id="lblBalanceTitle" class="text-xs font-bold uppercase tracking-widest text-amber-950/80">Jemi Bakiýañyz</p>
+            <div class="flex items-baseline space-x-2 mt-1">
+                <span id="userBalance" class="text-4xl font-extrabold">0.00</span>
+                <span class="text-lg font-bold">TMT</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-amber-600/40 flex justify-between text-xs font-semibold text-amber-950">
+                <span>1000 Puan = 20 TMT</span>
+                <span>Min. Çekim: 100 TMT</span>
+            </div>
+        </div>
+
+        <!-- Task / Watch Ad Section -->
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 space-y-4">
+            <h2 id="lblWatchTitle" class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-play-circle text-amber-500"></i> Reklama Seret we Kazan
+            </h2>
+            <p id="lblWatchDesc" class="text-xs text-slate-400">Her bir görlen reklama üçin bakiýañyza bal goşular.</p>
+            
+            <button onclick="watchAd()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-bolt"></i> <span id="btnWatch">Reklama Gör (+50 Puan)</span>
+            </button>
+        </div>
+
+        <!-- Withdrawal Section -->
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 space-y-4">
+            <h2 id="lblWithdrawTitle" class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-amber-500"></i> Pul Çekmek
+            </h2>
+            
+            <div class="space-y-3">
+                <select id="withdrawMethod" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
+                    <option value="PUBG_UC">PUBG UC (Player ID)</option>
+                    <option value="USDT">Crypto USDT (BEP20 / TRC20)</option>
+                </select>
+
+                <input type="text" id="accountDetails" placeholder="Player ID / Wallet Adresi" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
+
+                <input type="number" id="withdrawAmount" placeholder="Möçberi (TMT)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
+
+                <button onclick="requestWithdrawal()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition active:scale-95">
+                    <span id="btnWithdraw">Sargyt Et</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Supabase Bağlantısı
+        const SUPABASE_URL = "https://tjflipjmzatfteeonnye.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_sgtCtf-FogjhA0fghAE4fA_W8ATUyHr";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentPoints = 0;
+        let currentBalanceTmt = 0;
+        let currentLang = 'TK'; // Varsayılan Türkmençe
+
+        const dict = {
+            TK: {
+                balTitle: "Jemi Bakiýañyz",
+                watchTitle: "Reklama Seret we Kazan",
+                watchDesc: "Her bir görlen reklama üçin bakiýañyza bal goşular.",
+                btnWatch: "Reklama Gör (+50 Puan)",
+                withdrawTitle: "Pul Çekmek",
+                btnWithdraw: "Sargyt Et"
+            },
+            TR: {
+                balTitle: "Toplam Bakiyeniz",
+                watchTitle: "Reklam İzle ve Kazan",
+                watchDesc: "Her izlediğiniz reklam için hesabınıza puan eklenecektir.",
+                btnWatch: "Reklam İzle (+50 Puan)",
+                withdrawTitle: "Para Çekme",
+                btnWithdraw: "Talep Et"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'TK' ? 'TR' : 'TK';
+            document.getElementById('lblBalanceTitle').innerText = dict[currentLang].balTitle;
+            document.getElementById('lblWatchTitle').innerHTML = `<i class="fa-solid fa-play-circle text-amber-500"></i> ${dict[currentLang].watchTitle}`;
+            document.getElementById('lblWatchDesc').innerText = dict[currentLang].watchDesc;
+            document.getElementById('btnWatch').innerText = dict[currentLang].btnWatch;
+            document.getElementById('lblWithdrawTitle').innerHTML = `<i class="fa-solid fa-wallet text-amber-500"></i> ${dict[currentLang].withdrawTitle}`;
+            document.getElementById('btnWithdraw').innerText = dict[currentLang].btnWithdraw;
+        }
+
+        function watchAd() {
+            // Ödüllü Reklam Entegrasyonu Mantığı (PropellerAds / AdMob Callback)
+            alert(currentLang === 'TK' ? 'Reklama yüklendi! 50 Puan goşuldy.' : 'Reklam izlendi! 50 Puan eklendi.');
+            currentPoints += 50;
+            currentBalanceTmt = (currentPoints / 1000) * 20; // 1000 Puan = 20 TMT
+            document.getElementById('userBalance').innerText = currentBalanceTmt.toFixed(2);
+        }
+
+        function requestWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const account = document.getElementById('accountDetails').value;
+
+            if (!account) {
+                alert(currentLang === 'TK' ? 'Hesap maglumatlaryñyzy giriziñ!' : 'Lütfen hesap bilgilerinizi girin!');
+                return;
+            }
+
+            if (isNaN(amount) || amount < 100) {
+                alert(currentLang === 'TK' ? 'Añrybaş çekim möçberi 100 TMT!' : 'Minimum çekim limiti 100 TMT!');
+                return;
+            }
+
+            if (amount > currentBalanceTmt) {
+                alert(currentLang === 'TK' ? 'Bakiýañyz ýetimsiz!' : 'Yetersiz bakiye!');
+                return;
+            }
+
+            alert(currentLang === 'TK' ? 'Puly çekmek sargydyñyz kabul edildi!' : 'Para çekme talebiniz başarıyla alındı!');
+        }
+    </script>
+</body>
+</html>
