@@ -59,15 +59,29 @@
     <main id="dashboardSection" class="hidden max-w-md mx-auto p-4 pb-24 space-y-6">
 
         <!-- Balance / Ad Stat Card -->
-        <div class="bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl p-6 text-slate-950 shadow-xl relative overflow-hidden">
+        <div class="bg-gradient-to-br from-amber-500 to-amber-700 rounded-3xl p-6 text-slate-950 shadow-xl relative overflow-hidden space-y-4">
             <div class="absolute -right-4 -bottom-4 opacity-10 text-8xl font-black">ADS</div>
-            <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80">Şugünki Görlen Reklama</p>
-            <div class="flex items-baseline space-x-2 mt-1">
-                <span id="userAdCount" class="text-4xl font-extrabold">0</span>
-                <span class="text-lg font-bold">Sany Reklama</span>
+            
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80">Görlen Reklama</p>
+                    <div class="flex items-baseline space-x-1 mt-0.5">
+                        <span id="userAdCount" class="text-3xl font-extrabold">0</span>
+                        <span class="text-xs font-bold">sany</span>
+                    </div>
+                </div>
+                
+                <div class="text-right">
+                    <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80">Gazanylan Bakiýa</p>
+                    <div class="flex items-baseline space-x-1 mt-0.5 justify-end">
+                        <span id="userBalance" class="text-3xl font-extrabold">0.00</span>
+                        <span class="text-xs font-bold">TMT</span>
+                    </div>
+                </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-amber-600/40 flex justify-between text-xs font-semibold text-amber-950">
-                <span>Her gün sagat 12:00-da hasaplaşyk geçirilýär</span>
+
+            <div class="pt-3 border-t border-amber-600/40 flex justify-between text-xs font-semibold text-amber-950">
+                <span>⏰ Her gün sagat 12:00-da tölagler barlaňyp ugradylýar</span>
             </div>
         </div>
 
@@ -76,7 +90,7 @@
             <h2 class="text-lg font-bold flex items-center gap-2">
                 <i class="fa-solid fa-play-circle text-amber-500"></i> Reklama Seret we Kazan
             </h2>
-            <p class="text-xs text-slate-400">Reklama doly seredip gutaranyñyzdan soň bakiýañyza goşular.</p>
+            <p class="text-xs text-slate-400">Reklama doly seredip gutaranyñyzdan soň bakiýañyz we reklama sanyñyz artar.</p>
             
             <button onclick="watchAd()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-4 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
                 <i class="fa-solid fa-bolt"></i> <span>Reklama Gör</span>
@@ -126,13 +140,13 @@
         </div>
 
         <!-- ADMIN PANEL (Sadece Admin Görebilir) -->
-        <div id="adminPanel" class="hidden bg-red-950/30 border border-red-700/50 rounded-2xl p-5 space-y-4">
-            <h2 class="text-lg font-bold text-red-400 flex items-center gap-2">
+        <div id="adminPanel" class="hidden bg-amber-950/20 border border-amber-600/30 rounded-2xl p-5 space-y-4">
+            <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
                 <i class="fa-solid fa-user-shield"></i> Admin İdarä Etme Paneli
             </h2>
-            <p class="text-xs text-slate-400">Şugünki istatistikalar we ulanyjylaryñ reklama sany:</p>
-            <div id="userList" class="space-y-2 text-xs">
-                <!-- Dinamik liste buraya düşecek -->
+            <p class="text-xs text-slate-400">Gelen ödeme talepleri ve kullanıcı istatistikleri:</p>
+            <div id="userList" class="space-y-3 text-xs">
+                <!-- Dinamik talep listesi buraya gelecek -->
             </div>
         </div>
 
@@ -171,7 +185,8 @@
             }
 
             const fullPhone = "+993" + phone;
-            currentUser = { phone: fullPhone, adCount: 0, isAdmin: (phone === '61000000') }; // Kendinize Özel Admin Numarası Yapabilirsiniz
+            // Kendi numaranızı admin yapmak için alt taraftaki '61000000' yerine kendi numaranızı yazabilirsiniz
+            currentUser = { phone: fullPhone, adCount: 0, balance: 0.00, isAdmin: (phone === '61000000') };
 
             localStorage.setItem('suffer_user', JSON.stringify(currentUser));
             showDashboard();
@@ -182,6 +197,7 @@
             document.getElementById('dashboardSection').classList.remove('hidden');
             document.getElementById('btnLogout').classList.remove('hidden');
             document.getElementById('userAdCount').innerText = currentUser.adCount || 0;
+            document.getElementById('userBalance').innerText = (currentUser.balance || 0).toFixed(2);
 
             if (currentUser.isAdmin) {
                 document.getElementById('adminPanel').classList.remove('hidden');
@@ -196,15 +212,16 @@
         }
 
         function watchAd() {
-            // Reklam Tetikleme
             alert('Reklama açylýar... Lütfen bitýänçä garaşyň.');
             
-            // Reklam Başarıyla Bittiğinde
             currentUser.adCount = (currentUser.adCount || 0) + 1;
+            currentUser.balance = (currentUser.balance || 0) + 0.25; // Örnek reklam başı biriken tahmini tutar
+            
             document.getElementById('userAdCount').innerText = currentUser.adCount;
+            document.getElementById('userBalance').innerText = currentUser.balance.toFixed(2);
             localStorage.setItem('suffer_user', JSON.stringify(currentUser));
             
-            alert('Reklama seredildi! Şugünki reklama sanyñyz güncellendi.');
+            alert('Reklama seredildi! Bakiýañyz güncellendi.');
         }
 
         function requestWithdrawal() {
@@ -213,7 +230,7 @@
                 alert('Haýyş, maglumatlary doly giriziñ!');
                 return;
             }
-            alert('Sargydyñyz kabul edildi! Sagat 12:00-da barlanyp ugradylar.');
+            alert('Sargydyñyz kabul edildi! Sagat 12:00-da admin tarapyndan barlanyp 50% paýyñyz ugradylar.');
         }
 
         function onMethodChange() {
@@ -234,15 +251,22 @@
         }
 
         function loadAdminData() {
-            // Admin için örnek kullanıcı listesi gösterimi
             const list = document.getElementById('userList');
             list.innerHTML = `
-                <div class="bg-slate-900 p-3 rounded-xl flex justify-between items-center border border-slate-800">
-                    <div>
-                        <p class="font-bold text-amber-500">+99365123456</p>
-                        <p class="text-slate-400">Şugünki Reklama: 18 ad</p>
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-amber-500">+99365123456</span>
+                        <span class="bg-amber-500/20 text-amber-400 text-[10px] px-2 py-0.5 rounded-full">Bekleyen Talep</span>
                     </div>
-                    <button onclick="alert('Ödeme yapıldı ve sıfırlandı')" class="bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs">Öde & Sıfırla</button>
+                    <div class="text-slate-300 text-[11px] space-y-0.5">
+                        <p><strong>Reklama Sany:</strong> 24 ad</p>
+                        <p><strong>Toplam Kazanç:</strong> 6.00 TMT</p>
+                        <p><strong>Gönderilecek Pay (%50):</strong> <span class="text-green-400 font-bold">3.00 TMT</span></p>
+                        <p><strong>Yöntem & Adres:</strong> PUBG UC (Player ID: 512398745)</p>
+                    </div>
+                    <button onclick="alert('Ödeme onaylandı! %50 pay kullanıcıya aktarıldı ve reklam sayısı sıfırlandı.')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs transition">
+                        ✓ Onayla & %50 Öde
+                    </button>
                 </div>
             `;
         }
