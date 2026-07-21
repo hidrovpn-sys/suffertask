@@ -81,27 +81,27 @@
             </div>
 
             <div class="pt-3 border-t border-amber-600/40 flex justify-between text-xs font-semibold text-amber-950">
-                <span>⏰ Her gün sagat 12:00-da tölagler barlaňyp ugradýar</span>
+                <span>⏰ Her gün sagat 12:00-da tölegler barlaňyp ugradylýar</span>
             </div>
         </div>
 
-        <!-- Ad Watch Section (2 Ayrı Reklam Butonu) -->
+        <!-- Ad Watch Section -->
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 space-y-4">
             <h2 class="text-lg font-bold flex items-center gap-2">
                 <i class="fa-solid fa-play-circle text-amber-500"></i> Reklama Seret we Kazan
             </h2>
-            <p class="text-xs text-slate-400">Aşakdaky 2 sany reklama düwmesine basyp, doly seredip bakiýañyzy artdyryp bilersiñiz.</p>
+            <p class="text-xs text-slate-400">Aşakdaky düwmelere basyp reklama serediň. Ödül almak üçin açylan sahypada <b>30 saniye</b> garaşmaly!</p>
             
             <div class="space-y-3">
-                <!-- 1. Reklam Butonu (Direct Link / Video Tarzı) -->
-                <button onclick="watchAd(1)" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-between">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-video text-base"></i> Reklama 1 (Ödüllü Video)</span>
+                <!-- 1. Reklam Butonu -->
+                <button id="btnAd1" onclick="watchAd(1)" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-between">
+                    <span id="txtAd1" class="flex items-center gap-2"><i class="fa-solid fa-video text-base"></i> Reklama 1 (Ödüllü Video)</span>
                     <span class="bg-amber-600/30 text-amber-950 text-xs px-2.5 py-1 rounded-lg font-extrabold">+0.25 TMT</span>
                 </button>
 
-                <!-- 2. Reklam Butonu (Alternatif Link) -->
-                <button onclick="watchAd(2)" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-between border border-amber-500/30">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-base"></i> Reklama 2 (Alternatif Link)</span>
+                <!-- 2. Reklam Butonu -->
+                <button id="btnAd2" onclick="watchAd(2)" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-between border border-amber-500/30">
+                    <span id="txtAd2" class="flex items-center gap-2"><i class="fa-solid fa-bolt text-base"></i> Reklama 2 (Alternatif Link)</span>
                     <span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 rounded-lg font-extrabold">+0.25 TMT</span>
                 </button>
             </div>
@@ -121,16 +121,16 @@
                     <option value="TMT">TMT (Nakit / Kart)</option>
                 </select>
 
-                <!-- UC Paketleri Geri Eklendi -->
+                <!-- Yenilenen UC Fiyat Tablosu -->
                 <div id="ucPackageGroup" class="space-y-1">
                     <label class="text-xs text-slate-400 block">UC Paketi Seçin</label>
                     <select id="ucPackage" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
-                        <option value="60 UC">60 UC (50 TMT)</option>
-                        <option value="325 UC">325 UC (250 TMT)</option>
-                        <option value="660 UC">660 UC (480 TMT)</option>
-                        <option value="1800 UC">1800 UC (1250 TMT)</option>
-                        <option value="3850 UC">3850 UC (2600 TMT)</option>
-                        <option value="8100 UC">8100 UC (5200 TMT)</option>
+                        <option value="60 UC">60 UC (20 TMT)</option>
+                        <option value="325 UC">325 UC (100 TMT)</option>
+                        <option value="660 UC">660 UC (200 TMT)</option>
+                        <option value="1800 UC">1800 UC (500 TMT)</option>
+                        <option value="3850 UC">3850 UC (1000 TMT)</option>
+                        <option value="8100 UC">8100 UC (2000 TMT)</option>
                     </select>
                 </div>
 
@@ -144,7 +144,7 @@
                     <input type="text" id="accountDetails" placeholder="Player ID giriziñ" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none">
                 </div>
 
-                <button onclick="requestWithdrawal()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 rounded-xl transition active:scale-95">
+                <button onclick="requestWithdrawal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl transition active:scale-95">
                     Sargyt Et
                 </button>
             </div>
@@ -170,10 +170,10 @@
 
         let currentUser = null;
         let isSignUpMode = false;
+        let isWatchingAd = false;
 
-        // Reklam Linkleriniz (İstediğin zaman ikisine de farklı linkler koyabilirsin)
         const AD_LINK_1 = "https://omg10.com/4/11366097";
-        const AD_LINK_2 = "https://omg10.com/4/11366097"; // İstersen buraya 2. farklı Monetag linkini yazabilirsin
+        const AD_LINK_2 = "https://omg10.com/4/11366097";
 
         window.onload = () => {
             const savedUser = localStorage.getItem('suffer_user');
@@ -190,7 +190,7 @@
             document.getElementById('btnToggleAuth').innerText = isSignUpMode ? 'Öňden hasabyñyz barmy? Giris ediñ' : 'Täze hasap açmak üçin basyñ';
         }
 
-        function handleAuth() {
+        async function handleAuth() {
             const phone = document.getElementById('authPhone').value.trim();
             const pass = document.getElementById('authPassword').value.trim();
 
@@ -200,7 +200,24 @@
             }
 
             const fullPhone = "+993" + phone;
-            currentUser = { phone: fullPhone, adCount: 0, balance: 0.00, isAdmin: (phone === '61000000') };
+
+            if (isSignUpMode) {
+                const { data, error } = await _supabase
+                    .from('users')
+                    .insert([{ phone: fullPhone, password: pass, adCount: 0, balance: 0.00 }]);
+
+                if (error) {
+                    alert('Kayıt sırasında hata oluştu veya bu numara zaten kayıtlı.');
+                    return;
+                }
+            }
+
+            currentUser = { 
+                phone: fullPhone, 
+                adCount: 0, 
+                balance: 0.00, 
+                isAdmin: (phone === '61000000') 
+            };
 
             localStorage.setItem('suffer_user', JSON.stringify(currentUser));
             showDashboard();
@@ -226,28 +243,72 @@
         }
 
         function watchAd(buttonNumber) {
-            // Hangi butona basıldıysa ona uygun reklam linkini aç
+            if (isWatchingAd) {
+                alert("Zaten devam eden bir reklam göreviniz var! Lütfen sayacın bitmesini bekleyin.");
+                return;
+            }
+
             const targetLink = (buttonNumber === 2) ? AD_LINK_2 : AD_LINK_1;
             window.open(targetLink, '_blank');
 
-            // Kullanıcının sayaç ve bakiyesini güncelle
-            currentUser.adCount = (currentUser.adCount || 0) + 1;
-            currentUser.balance = (currentUser.balance || 0) + 0.25; 
-            
-            document.getElementById('userAdCount').innerText = currentUser.adCount;
-            document.getElementById('userBalance').innerText = currentUser.balance.toFixed(2);
-            localStorage.setItem('suffer_user', JSON.stringify(currentUser));
-            
-            alert('Reklama ' + buttonNumber + ' açyldy! Seredip gutaranyñyzdan soň bakiýañyz goşuldy.');
+            isWatchingAd = true;
+            let timeLeft = 30;
+
+            const btn = document.getElementById(buttonNumber === 1 ? 'btnAd1' : 'btnAd2');
+            const txt = document.getElementById(buttonNumber === 1 ? 'txtAd1' : 'txtAd2');
+            const originalText = txt.innerHTML;
+
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const timer = setInterval(() => {
+                txt.innerHTML = `<i class="fa-solid fa-clock text-base"></i> Garaşyň: ${timeLeft}s`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    isWatchingAd = false;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    txt.innerHTML = originalText;
+
+                    currentUser.adCount = (currentUser.adCount || 0) + 1;
+                    currentUser.balance = (currentUser.balance || 0) + 0.25;
+
+                    document.getElementById('userAdCount').innerText = currentUser.adCount;
+                    document.getElementById('userBalance').innerText = currentUser.balance.toFixed(2);
+                    localStorage.setItem('suffer_user', JSON.stringify(currentUser));
+
+                    alert('Tebrikler! 30 saniye süre doldu ve +0.25 TMT bakiyenize eklendi.');
+                }
+            }, 1000);
         }
 
-        function requestWithdrawal() {
+        async function requestWithdrawal() {
             const detail = document.getElementById('accountDetails').value.trim();
+            const method = document.getElementById('withdrawMethod').value;
+            let amount = "";
+
+            if (method === 'PUBG_UC') {
+                amount = document.getElementById('ucPackage').value;
+            } else {
+                amount = document.getElementById('withdrawAmount').value + (method === 'USDT' ? ' USDT' : ' TMT');
+            }
+
             if (!detail) {
                 alert('Haýyş, maglumatlary doly giriziñ!');
                 return;
             }
-            alert('Sargydyñyz kabul edildi! Sagat 12:00-da admin tarapyndan barlanyp 50% payyñyz ugradylar.');
+
+            const { error } = await _supabase
+                .from('withdrawals')
+                .insert([{ phone: currentUser.phone, method: method, amount: amount, detail: detail }]);
+
+            if (error) {
+                console.log("Supabase error:", error);
+            }
+
+            alert('Sargydyñyz kabul edildi! Sagat 12:00-da admin tarapyndan barlanyp ugradylar.');
         }
 
         function onMethodChange() {
@@ -277,7 +338,7 @@
                     </div>
                     <div class="text-slate-300 text-[11px] space-y-0.5">
                         <p><strong>Reklama Sany:</strong> ${currentUser.adCount} ad</p>
-                        <p><strong>Gönderilecek Pay (%50):</strong> <span class="text-green-400 font-bold">${(currentUser.balance * 0.5).toFixed(2)} TMT</span></p>
+                        <p><strong>Toplam Bakiye:</strong> <span class="text-green-400 font-bold">${currentUser.balance.toFixed(2)} TMT</span></p>
                     </div>
                 </div>
             `;
