@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SufferTask - Gazanç Et</title>
+    <title>SufferTask - Gazanç Et / Kazan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -14,8 +14,17 @@
     <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 p-4">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <h1 class="text-xl font-black text-amber-500 tracking-wider">SUFFER<span class="text-white">TASK</span></h1>
-            <div class="flex items-center gap-3">
-                <button id="btnLogout" onclick="logout()" class="hidden text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-full hover:bg-red-500/30 transition">Çykış</button>
+            
+            <div class="flex items-center gap-2">
+                <!-- Dil Seçimi (Language Selector) -->
+                <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-800 text-xs font-bold text-amber-500 border border-slate-700 px-2.5 py-1.5 rounded-full focus:outline-none">
+                    <option value="tk">TK 🇹🇲</option>
+                    <option value="tr">TR 🇹🇷</option>
+                </select>
+
+                <button id="btnLogout" onclick="logout()" class="hidden text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-full hover:bg-red-500/30 transition">
+                    <span data-lang="logout">Çykış</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -24,13 +33,13 @@
     <div id="authSection" class="max-w-md mx-auto p-4 mt-6 space-y-6">
         <div class="bg-slate-800/80 border border-slate-700 rounded-3xl p-6 space-y-5 shadow-2xl">
             <div class="text-center space-y-1">
-                <h2 id="authTitle" class="text-2xl font-black text-amber-500">Ulgama Gir</h2>
-                <p class="text-xs text-slate-400">Pulyñyzy gazanmak üçin giriñ ýa-da hasap açyñ</p>
+                <h2 id="authTitle" class="text-2xl font-black text-amber-500" data-lang="loginTitle">Ulgama Gir</h2>
+                <p class="text-xs text-slate-400" data-lang="loginDesc">Pulyñyzy gazanmak üçin giriñ ýa-da hasap açyñ</p>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="text-xs text-slate-400 font-semibold mb-1 block">Telefon Nomeri</label>
+                    <label class="text-xs text-slate-400 font-semibold mb-1 block" data-lang="phoneLabel">Telefon Nomeri</label>
                     <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl overflow-hidden">
                         <span class="bg-slate-800 text-amber-500 font-bold px-3 py-3 text-sm border-r border-slate-700">+993</span>
                         <input type="tel" id="authPhone" placeholder="6XXXXXXX" maxlength="8" class="bg-transparent w-full p-3 text-sm focus:outline-none">
@@ -38,16 +47,16 @@
                 </div>
 
                 <div>
-                    <label class="text-xs text-slate-400 font-semibold mb-1 block">Açar Sözi (Şifre)</label>
+                    <label class="text-xs text-slate-400 font-semibold mb-1 block" data-lang="passLabel">Açar Sözi (Şifre)</label>
                     <input type="password" id="authPassword" placeholder="******" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
                 </div>
 
-                <button id="btnAuthSubmit" onclick="handleAuth()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl transition active:scale-95 shadow-lg">
+                <button id="btnAuthSubmit" onclick="handleAuth()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl transition active:scale-95 shadow-lg" data-lang="btnLogin">
                     Ulgama Gir
                 </button>
 
                 <div class="text-center pt-2">
-                    <button onclick="toggleAuthMode()" id="btnToggleAuth" class="text-xs text-amber-500 hover:underline">
+                    <button onclick="toggleAuthMode()" id="btnToggleAuth" class="text-xs text-amber-500 hover:underline" data-lang="toggleToSignUp">
                         Täze hasap açmak üçin basyñ
                     </button>
                 </div>
@@ -55,7 +64,7 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD (Kullanıcı Paneli) -->
+    <!-- MAIN DASHBOARD -->
     <main id="dashboardSection" class="hidden max-w-md mx-auto p-4 pb-24 space-y-6">
 
         <!-- Balance / Ad Stat Card -->
@@ -64,15 +73,15 @@
             
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80">Görlen Reklama</p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80" data-lang="adCountLabel">Görlen Reklama</p>
                     <div class="flex items-baseline space-x-1 mt-0.5">
                         <span id="userAdCount" class="text-3xl font-extrabold">0</span>
-                        <span class="text-xs font-bold">sany</span>
+                        <span class="text-xs font-bold" data-lang="countUnit">sany</span>
                     </div>
                 </div>
                 
                 <div class="text-right">
-                    <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80">Gazanylan Bakiýa</p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-amber-950/80" data-lang="balanceLabel">Gazanylan Bakiýa</p>
                     <div class="flex items-baseline space-x-1 mt-0.5 justify-end">
                         <span id="userBalance" class="text-3xl font-extrabold">0.00</span>
                         <span class="text-xs font-bold">TMT</span>
@@ -81,27 +90,25 @@
             </div>
 
             <div class="pt-3 border-t border-amber-600/40 flex justify-between text-xs font-semibold text-amber-950">
-                <span>⏰ Her gün sagat 12:00-da tölegler barlaňyp ugradylýar</span>
+                <span data-lang="payoutNotice">⏰ Her gün sagat 12:00-da tölegler barlaňyp ugradylýar</span>
             </div>
         </div>
 
         <!-- Ad Watch Section -->
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 space-y-4">
             <h2 class="text-lg font-bold flex items-center gap-2">
-                <i class="fa-solid fa-play-circle text-amber-500"></i> Reklama Seret we Kazan
+                <i class="fa-solid fa-play-circle text-amber-500"></i> <span data-lang="watchSectionTitle">Reklama Seret we Kazan</span>
             </h2>
-            <p class="text-xs text-slate-400">Aşakdaky düwmelere basyp reklama serediň. Ödül almak üçin açylan sahypada <b>30 saniye</b> garaşmaly!</p>
+            <p class="text-xs text-slate-400" data-lang="watchDesc">Aşakdaky düwmelere basyp reklama serediň. Ödül almak üçin açylan sahypada <b>30 saniye</b> garaşmaly!</p>
             
             <div class="space-y-3">
-                <!-- 1. Reklam Butonu -->
                 <button id="btnAd1" onclick="watchAd(1)" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-between">
-                    <span id="txtAd1" class="flex items-center gap-2"><i class="fa-solid fa-video text-base"></i> Reklama 1 (Ödüllü Video)</span>
+                    <span id="txtAd1" class="flex items-center gap-2"><i class="fa-solid fa-video text-base"></i> <span data-lang="adBtn1">Reklama 1 (Ödüllü Video)</span></span>
                     <span class="bg-amber-600/30 text-amber-950 text-xs px-2.5 py-1 rounded-lg font-extrabold">+0.25 TMT</span>
                 </button>
 
-                <!-- 2. Reklam Butonu -->
                 <button id="btnAd2" onclick="watchAd(2)" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-between border border-amber-500/30">
-                    <span id="txtAd2" class="flex items-center gap-2"><i class="fa-solid fa-bolt text-base"></i> Reklama 2 (Alternatif Link)</span>
+                    <span id="txtAd2" class="flex items-center gap-2"><i class="fa-solid fa-bolt text-base"></i> <span data-lang="adBtn2">Reklama 2 (Alternatif Link)</span></span>
                     <span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-1 rounded-lg font-extrabold">+0.25 TMT</span>
                 </button>
             </div>
@@ -110,20 +117,19 @@
         <!-- Withdrawal Section -->
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 space-y-4">
             <h2 class="text-lg font-bold flex items-center gap-2">
-                <i class="fa-solid fa-wallet text-amber-500"></i> Pul / UC Çekmek
+                <i class="fa-solid fa-wallet text-amber-500"></i> <span data-lang="withdrawTitle">Pul / UC Çekmek</span>
             </h2>
             
             <div class="space-y-3">
-                <label class="text-xs text-slate-400 block">Çekim Yöntemi</label>
+                <label class="text-xs text-slate-400 block" data-lang="withdrawMethodLabel">Çekim Ýoly</label>
                 <select id="withdrawMethod" onchange="onMethodChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
                     <option value="PUBG_UC">PUBG UC</option>
                     <option value="USDT">Crypto USDT</option>
                     <option value="TMT">TMT (Nakit / Kart)</option>
                 </select>
 
-                <!-- UC Paketleri -->
                 <div id="ucPackageGroup" class="space-y-1">
-                    <label class="text-xs text-slate-400 block">UC Paketi Seçin</label>
+                    <label class="text-xs text-slate-400 block" data-lang="selectPackageLabel">UC Paketi Saýlaň</label>
                     <select id="ucPackage" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-amber-500">
                         <option value="60 UC">60 UC (20 TMT)</option>
                         <option value="325 UC">325 UC (100 TMT)</option>
@@ -135,16 +141,16 @@
                 </div>
 
                 <div id="customAmountGroup" class="hidden space-y-1">
-                    <label id="lblAmountUnit" class="text-xs text-slate-400 block">Möçberi</label>
-                    <input type="number" id="withdrawAmount" placeholder="Möçber giriziñ" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none">
+                    <label id="lblAmountUnit" class="text-xs text-slate-400 block" data-lang="amountLabel">Möçberi</label>
+                    <input type="number" id="withdrawAmount" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none">
                 </div>
 
                 <div class="space-y-1">
                     <label id="lblAccountDetail" class="text-xs text-slate-400 block">PUBG Player ID</label>
-                    <input type="text" id="accountDetails" placeholder="Player ID giriziñ" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none">
+                    <input type="text" id="accountDetails" placeholder="Player ID / Wallet / Card" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none">
                 </div>
 
-                <button onclick="requestWithdrawal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl transition active:scale-95">
+                <button onclick="requestWithdrawal()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-xl transition active:scale-95" data-lang="btnOrder">
                     Sargyt Et
                 </button>
             </div>
@@ -153,12 +159,9 @@
         <!-- ADMIN PANEL -->
         <div id="adminPanel" class="hidden bg-amber-950/20 border border-amber-600/30 rounded-2xl p-5 space-y-4">
             <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                <i class="fa-solid fa-user-shield"></i> Admin İdarä Etme Paneli
+                <i class="fa-solid fa-user-shield"></i> <span data-lang="adminTitle">Admin İdarä Etme Paneli</span>
             </h2>
-            <p class="text-xs text-slate-400">Gelen ödeme talepleri ve kullanıcı istatistikleri:</p>
-            <div id="userList" class="space-y-3 text-xs">
-                <!-- Dinamik talep listesi -->
-            </div>
+            <div id="userList" class="space-y-3 text-xs"></div>
         </div>
 
     </main>
@@ -171,9 +174,78 @@
         let currentUser = null;
         let isSignUpMode = false;
         let isWatchingAd = false;
+        let currentLang = 'tk';
 
         const AD_LINK_1 = "https://omg10.com/4/11366097";
         const AD_LINK_2 = "https://omg10.com/4/11366097";
+
+        // DİL KÜTÜPHANESİ (TK & TR)
+        const i18n = {
+            tk: {
+                logout: "Çykış",
+                loginTitle: "Ulgama Gir",
+                signUpTitle: "Hasap Aç",
+                loginDesc: "Pulyñyzy gazanmak üçin giriñ ýa-da hasap açyñ",
+                phoneLabel: "Telefon Nomeri",
+                passLabel: "Açar Sözi (Şifre)",
+                btnLogin: "Ulgama Gir",
+                btnSignUp: "Kayıt Bol",
+                toggleToSignUp: "Täze hasap açmak üçin basyñ",
+                toggleToLogin: "Öňden hasabyñyz barmy? Giris ediñ",
+                adCountLabel: "Görlen Reklama",
+                countUnit: "sany",
+                balanceLabel: "Gazanylan Bakiýa",
+                payoutNotice: "⏰ Her gün sagat 12:00-da tölegler barlaňyp ugradylýar",
+                watchSectionTitle: "Reklama Seret we Kazan",
+                watchDesc: "Aşakdaky düwmelere basyp reklama serediň. Ödül almak üçin açylan sahypada 30 saniye garaşmaly!",
+                adBtn1: "Reklama 1 (Ödüllü Video)",
+                adBtn2: "Reklama 2 (Alternatif Link)",
+                withdrawTitle: "Pul / UC Çekmek",
+                withdrawMethodLabel: "Çekim Ýoly",
+                selectPackageLabel: "UC Paketi Saýlaň",
+                amountLabel: "Möçberi",
+                btnOrder: "Sargyt Et",
+                adminTitle: "Admin İdarä Etme Paneli",
+                timerText: "Garaşyň",
+                alertWatchInProgress: "Eýýäm dowam edýän reklama göreviňiz bar! Sayaç bitýänçä garaşyň.",
+                alertReward: "Tebrikler! 30 saniye wagty doldy we +0.25 TMT bakiýaňyza goşuldy.",
+                alertErrorAuth: "Dogry nomer we açar sözüni giriziñ!",
+                alertLoginFail: "Telefon nomeri ýa-da açar sözi ýalňyş!",
+                alertOrderSuccess: "Sargydyñyz kabul edildi! Sagat 12:00-da admin tarapyndan barlanyp ugradylar."
+            },
+            tr: {
+                logout: "Çıkış Yap",
+                loginTitle: "Giriş Yap",
+                signUpTitle: "Kayıt Ol",
+                loginDesc: "Para kazanmak için giriş yapın veya hesap açın",
+                phoneLabel: "Telefon Numarası",
+                passLabel: "Şifre",
+                btnLogin: "Giriş Yap",
+                btnSignUp: "Kayıt Ol",
+                toggleToSignUp: "Yeni hesap açmak için tıklayın",
+                toggleToLogin: "Zaten hesabınız var mı? Giriş yapın",
+                adCountLabel: "Izlenen Reklam",
+                countUnit: "adet",
+                balanceLabel: "Kazanılan Bakiye",
+                payoutNotice: "⏰ Her gün saat 12:00'de ödemeler kontrol edilip gönderilir",
+                watchSectionTitle: "Reklam İzle ve Kazan",
+                watchDesc: "Aşağıdaki butonlara basarak reklam izleyin. Ödül almak için açılan sayfada 30 saniye beklemelisiniz!",
+                adBtn1: "Reklam 1 (Ödüllü Video)",
+                adBtn2: "Reklam 2 (Alternatif Link)",
+                withdrawTitle: "Para / UC Çekme",
+                withdrawMethodLabel: "Çekim Yöntemi",
+                selectPackageLabel: "UC Paketi Seçin",
+                amountLabel: "Miktar",
+                btnOrder: "Sipariş Et",
+                adminTitle: "Admin Yönetim Paneli",
+                timerText: "Bekleyin",
+                alertWatchInProgress: "Zaten devam eden bir reklam göreviniz var! Lütfen sayacın bitmesini bekleyin.",
+                alertReward: "Tebrikler! 30 saniye süre doldu ve +0.25 TMT bakiyenize eklendi.",
+                alertErrorAuth: "Doğru numara ve şifre giriniz!",
+                alertLoginFail: "Telefon numarası veya şifre yanlış!",
+                alertOrderSuccess: "Siparişiniz alındı! Saat 12:00'de admin tarafından kontrol edilip gönderilecektir."
+            }
+        };
 
         window.onload = () => {
             const savedUser = localStorage.getItem('suffer_user');
@@ -183,26 +255,37 @@
             }
         };
 
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-lang]').forEach(elem => {
+                const key = elem.getAttribute('data-lang');
+                if (i18n[lang][key]) {
+                    elem.innerText = i18n[lang][key];
+                }
+            });
+        }
+
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
-            document.getElementById('authTitle').innerText = isSignUpMode ? 'Hasap Aç' : 'Ulgama Gir';
-            document.getElementById('btnAuthSubmit').innerText = isSignUpMode ? 'Kayıt Bol' : 'Ulgama Gir';
-            document.getElementById('btnToggleAuth').innerText = isSignUpMode ? 'Öňden hasabyñyz barmy? Giris ediñ' : 'Täze hasap açmak üçin basyñ';
+            const t = i18n[currentLang];
+            document.getElementById('authTitle').innerText = isSignUpMode ? t.signUpTitle : t.loginTitle;
+            document.getElementById('btnAuthSubmit').innerText = isSignUpMode ? t.btnSignUp : t.btnLogin;
+            document.getElementById('btnToggleAuth').innerText = isSignUpMode ? t.toggleToLogin : t.toggleToSignUp;
         }
 
         async function handleAuth() {
+            const t = i18n[currentLang];
             const phone = document.getElementById('authPhone').value.trim();
             const pass = document.getElementById('authPassword').value.trim();
 
             if (phone.length < 7 || !pass) {
-                alert('Dogry nomer we açar sözüni giriziñ!');
+                alert(t.alertErrorAuth);
                 return;
             }
 
             const fullPhone = "+993" + phone;
 
             if (isSignUpMode) {
-                // KAYIT OLMA MODU
                 const { data, error } = await _supabase
                     .from('users')
                     .insert([{ phone: fullPhone, password: pass, adCount: 0, balance: 0.00 }]);
@@ -212,17 +295,8 @@
                     return;
                 }
 
-                currentUser = { 
-                    phone: fullPhone, 
-                    adCount: 0, 
-                    balance: 0.00, 
-                    isAdmin: (phone === '61000000') 
-                };
-
-                alert('Hasap başarıyla açıldı!');
-
+                currentUser = { phone: fullPhone, adCount: 0, balance: 0.00, isAdmin: (phone === '61000000') };
             } else {
-                // GİRİŞ YAPMA MODU (Giriş bilgilerini doğrulama)
                 const { data, error } = await _supabase
                     .from('users')
                     .select('*')
@@ -231,11 +305,10 @@
                     .maybeSingle();
 
                 if (error || !data) {
-                    alert('Telefon nomeri ýa-da açar sözi ýalňyş!');
-                    return; // Yanlış giriş olursa buradan öteye geçmez
+                    alert(t.alertLoginFail);
+                    return;
                 }
 
-                // Gerçek kullanıcı verilerini yükleme
                 currentUser = { 
                     phone: data.phone, 
                     adCount: data.adCount || 0, 
@@ -268,8 +341,9 @@
         }
 
         function watchAd(buttonNumber) {
+            const t = i18n[currentLang];
             if (isWatchingAd) {
-                alert("Zaten devam eden bir reklam göreviniz var! Lütfen sayacın bitmesini bekleyin.");
+                alert(t.alertWatchInProgress);
                 return;
             }
 
@@ -287,7 +361,7 @@
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
             const timer = setInterval(async () => {
-                txt.innerHTML = `<i class="fa-solid fa-clock text-base"></i> Garaşyň: ${timeLeft}s`;
+                txt.innerHTML = `<i class="fa-solid fa-clock text-base"></i> ${t.timerText}: ${timeLeft}s`;
                 timeLeft--;
 
                 if (timeLeft < 0) {
@@ -304,76 +378,6 @@
                     document.getElementById('userBalance').innerText = currentUser.balance.toFixed(2);
                     localStorage.setItem('suffer_user', JSON.stringify(currentUser));
 
-                    // Veritabanında bakiyeyi güncelleme
                     await _supabase
                         .from('users')
-                        .update({ adCount: currentUser.adCount, balance: currentUser.balance })
-                        .eq('phone', currentUser.phone);
-
-                    alert('Tebrikler! 30 saniye süre doldu ve +0.25 TMT bakiyenize eklendi.');
-                }
-            }, 1000);
-        }
-
-        async function requestWithdrawal() {
-            const detail = document.getElementById('accountDetails').value.trim();
-            const method = document.getElementById('withdrawMethod').value;
-            let amount = "";
-
-            if (method === 'PUBG_UC') {
-                amount = document.getElementById('ucPackage').value;
-            } else {
-                amount = document.getElementById('withdrawAmount').value + (method === 'USDT' ? ' USDT' : ' TMT');
-            }
-
-            if (!detail) {
-                alert('Haýyş, maglumatlary doly giriziñ!');
-                return;
-            }
-
-            const { error } = await _supabase
-                .from('withdrawals')
-                .insert([{ phone: currentUser.phone, method: method, amount: amount, detail: detail }]);
-
-            if (error) {
-                console.log("Supabase error:", error);
-            }
-
-            alert('Sargydyñyz kabul edildi! Sagat 12:00-da admin tarapyndan barlanyp ugradylar.');
-        }
-
-        function onMethodChange() {
-            const method = document.getElementById('withdrawMethod').value;
-            const ucGroup = document.getElementById('ucPackageGroup');
-            const customGroup = document.getElementById('customAmountGroup');
-            const lblDetail = document.getElementById('lblAccountDetail');
-
-            if (method === 'PUBG_UC') {
-                ucGroup.classList.remove('hidden');
-                customGroup.classList.add('hidden');
-                lblDetail.innerText = 'PUBG Player ID';
-            } else {
-                ucGroup.classList.add('hidden');
-                customGroup.classList.remove('hidden');
-                lblDetail.innerText = method === 'USDT' ? 'USDT Wallet Adresi' : 'Kart / Hesap Nomeri';
-            }
-        }
-
-        function loadAdminData() {
-            const list = document.getElementById('userList');
-            list.innerHTML = `
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-amber-500">${currentUser.phone}</span>
-                        <span class="bg-amber-500/20 text-amber-400 text-[10px] px-2 py-0.5 rounded-full">Aktif Hesap</span>
-                    </div>
-                    <div class="text-slate-300 text-[11px] space-y-0.5">
-                        <p><strong>Reklama Sany:</strong> ${currentUser.adCount} ad</p>
-                        <p><strong>Toplam Bakiye:</strong> <span class="text-green-400 font-bold">${currentUser.balance.toFixed(2)} TMT</span></p>
-                    </div>
-                </div>
-            `;
-        }
-    </script>
-</body>
-</html>
+                        .update({ adCount: currentUser.adCount, balance: currentUser.balance
