@@ -146,7 +146,7 @@
             </h2>
             <p class="text-xs text-slate-400">Gelen ödeme talepleri ve kullanıcı istatistikleri:</p>
             <div id="userList" class="space-y-3 text-xs">
-                <!-- Dinamik talep listesi buraya gelecek -->
+                <!-- Dinamik talep listesi -->
             </div>
         </div>
 
@@ -159,6 +159,9 @@
 
         let currentUser = null;
         let isSignUpMode = false;
+
+        // Monetag Reklam Linkiniz
+        const AD_LINK = "https://omg10.com/4/11366097";
 
         window.onload = () => {
             const savedUser = localStorage.getItem('suffer_user');
@@ -185,7 +188,7 @@
             }
 
             const fullPhone = "+993" + phone;
-            // Kendi numaranızı admin yapmak için alt taraftaki '61000000' yerine kendi numaranızı yazabilirsiniz
+            // Kendi telefon numaranızı buraya yazarak admin olabilirsiniz (Örn: '61234567')
             currentUser = { phone: fullPhone, adCount: 0, balance: 0.00, isAdmin: (phone === '61000000') };
 
             localStorage.setItem('suffer_user', JSON.stringify(currentUser));
@@ -212,16 +215,18 @@
         }
 
         function watchAd() {
-            alert('Reklama açylýar... Lütfen bitýänçä garaşyň.');
-            
+            // Gerçek Reklamı Yeni Sekmede Aç
+            window.open(AD_LINK, '_blank');
+
+            // Kullanıcının sayaç ve bakiyesini güncelle
             currentUser.adCount = (currentUser.adCount || 0) + 1;
-            currentUser.balance = (currentUser.balance || 0) + 0.25; // Örnek reklam başı biriken tahmini tutar
+            currentUser.balance = (currentUser.balance || 0) + 0.25; // Örnek pay
             
             document.getElementById('userAdCount').innerText = currentUser.adCount;
             document.getElementById('userBalance').innerText = currentUser.balance.toFixed(2);
             localStorage.setItem('suffer_user', JSON.stringify(currentUser));
             
-            alert('Reklama seredildi! Bakiýañyz güncellendi.');
+            alert('Reklama açyldy! Seredip gutaranyñyzdan soň bakiýañyz goşuldy.');
         }
 
         function requestWithdrawal() {
@@ -255,18 +260,13 @@
             list.innerHTML = `
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="font-bold text-amber-500">+99365123456</span>
-                        <span class="bg-amber-500/20 text-amber-400 text-[10px] px-2 py-0.5 rounded-full">Bekleyen Talep</span>
+                        <span class="font-bold text-amber-500">${currentUser.phone}</span>
+                        <span class="bg-amber-500/20 text-amber-400 text-[10px] px-2 py-0.5 rounded-full">Aktif Hesap</span>
                     </div>
                     <div class="text-slate-300 text-[11px] space-y-0.5">
-                        <p><strong>Reklama Sany:</strong> 24 ad</p>
-                        <p><strong>Toplam Kazanç:</strong> 6.00 TMT</p>
-                        <p><strong>Gönderilecek Pay (%50):</strong> <span class="text-green-400 font-bold">3.00 TMT</span></p>
-                        <p><strong>Yöntem & Adres:</strong> PUBG UC (Player ID: 512398745)</p>
+                        <p><strong>Reklama Sany:</strong> ${currentUser.adCount} ad</p>
+                        <p><strong>Gönderilecek Pay (%50):</strong> <span class="text-green-400 font-bold">${(currentUser.balance * 0.5).toFixed(2)} TMT</span></p>
                     </div>
-                    <button onclick="alert('Ödeme onaylandı! %50 pay kullanıcıya aktarıldı ve reklam sayısı sıfırlandı.')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs transition">
-                        ✓ Onayla & %50 Öde
-                    </button>
                 </div>
             `;
         }
